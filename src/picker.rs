@@ -1,6 +1,6 @@
 use crate::config;
 use crate::scanner::scan_apps;
-use crate::search::find_app;
+
 use std::{
     io::{self, Write},
     usize,

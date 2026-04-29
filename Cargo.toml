@@ -1,10 +1,16 @@
 [package]
 name = "tlaunch"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+description = "A terminal-first Linux app launcher with fuzzy search, alias system, and shell integration."
+license = "MIT"
+repository = "https://github.com/gaurav13407/tlaunch"
 
 [dependencies]
 walkdir="2"
 serde={version="1",features=["derive"]}
 toml="0.8"
 fuzzy-matcher="0.3"
+
+
