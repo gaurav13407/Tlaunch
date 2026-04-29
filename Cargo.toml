@@ -1,6 +1,6 @@
 [package]
 name = "tlaunch"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 description = "A terminal-first Linux app launcher with fuzzy search, alias system, and shell integration."
