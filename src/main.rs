@@ -1,18 +1,26 @@
-mod scanner;
-mod model;
-mod search;
-mod runner;
 mod config;
-mod setup;
+mod fuzzy;
+mod model;
 mod picker;
+mod runner;
+mod scanner;
+mod search;
+mod setup;
 
-use scanner::scan_apps;
-use search::find_app;
 use runner::run_app;
+use scanner::scan_apps;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-
+    if !std::path::Path::new(&format!(
+        "{}/.tlaunch/config.toml",
+        std::env::var("HOME").unwrap()
+    ))
+    .exists()
+    {
+        println!("⚠️  First time setup required!");
+        println!("👉 Run: tlaunch setup\n");
+    }
     // 🔹 Setup command
     if args.len() >= 2 && args[1] == "setup" {
         setup::run_setup();
@@ -28,22 +36,18 @@ fn main() {
     let home = std::env::var("HOME").unwrap();
     let local_path = format!("{}/.local/share/applications", home);
 
-    let paths = vec![
-        "/usr/share/applications".to_string(),
-        local_path,
-    ];
+    let paths = vec!["/usr/share/applications".to_string(), local_path];
 
-    // 🔹 List apps
+    // 🔹 List apps (now fuzzy)
     if args[1] == "list" {
         let apps = scan_apps(paths);
 
         if args.len() == 3 {
-            let query = args[2].to_lowercase();
+            let query = &args[2];
+            let results = fuzzy::fuzzy_search(&apps, query);
 
-            for app in apps {
-                if app.name.to_lowercase().contains(&query) {
-                    println!("{} → {}", app.name, app.exec);
-                }
+            for (app, _) in results.into_iter().take(20) {
+                println!("{} → {}", app.name, app.exec);
             }
         } else {
             for app in apps {
@@ -60,7 +64,7 @@ fn main() {
         return;
     }
 
-    // 🔹 Alias ADD
+    // 🔹 Alias ADD (fuzzy-enabled)
     if args.len() >= 5 && args[1] == "alias" && args[2] == "add" {
         let alias = &args[3];
         let target = &args[4];
@@ -73,8 +77,9 @@ fn main() {
         }
 
         let apps = scan_apps(paths.clone());
+        let results = fuzzy::fuzzy_search(&apps, target);
 
-        if let Some(app) = find_app(&apps, target) {
+        if let Some((app, _)) = results.first() {
             config.aliases.insert(alias.clone(), app.exec.clone());
             config::save_config(&config);
             println!("Alias '{}' added for {}", alias, app.name);
@@ -139,10 +144,12 @@ fn main() {
         return;
     }
 
-    // Fallback search
+    // 🔹 Fuzzy search fallback
     let apps = scan_apps(paths);
 
-    if let Some(app) = find_app(&apps, query) {
+    let results = fuzzy::fuzzy_search(&apps, query);
+
+    if let Some((app, _)) = results.first() {
         println!("Launching: {}", app.name);
         run_app(app);
     } else {

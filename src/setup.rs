@@ -16,7 +16,7 @@ pub fn run_setup() {
     let snippet = r#"
 # Tlaunch integration
 command_not_found_handler() {
-    tlaunch "$1"
+    tlaunch "$@"
 }
 "#;
 

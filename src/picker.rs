@@ -1,7 +1,10 @@
+use crate::config;
 use crate::scanner::scan_apps;
 use crate::search::find_app;
-use crate::config;
-use std::{io::{self, Write}, usize};
+use std::{
+    io::{self, Write},
+    usize,
+};
 
 pub fn run_picker(paths: Vec<String>) {
     let apps = scan_apps(paths);
@@ -14,25 +17,25 @@ pub fn run_picker(paths: Vec<String>) {
     io::stdin().read_line(&mut query).unwrap();
     let query = query.trim().to_lowercase();
 
-  // 🔹 Step 2: filter apps
-let mut filtered: Vec<_> = apps
-    .iter()
-    .filter(|app| app.name.to_lowercase().contains(&query))
-    .collect();
+    // 🔹 Step 2: filter apps
+    let mut filtered: Vec<_> = apps
+        .iter()
+        .filter(|app| app.name.to_lowercase().contains(&query))
+        .collect();
 
-// 🔹 Step 3: sort by relevance
-filtered.sort_by_key(|app| {
-    let name = app.name.to_lowercase();
+    // 🔹 Step 3: sort by relevance
+    filtered.sort_by_key(|app| {
+        let name = app.name.to_lowercase();
 
-    if name.starts_with(&query) {
-        0
-    } else {
-        1
-    }
-});
+        if name.starts_with(&query) {
+            0
+        } else {
+            1
+        }
+    });
 
-// 🔹 Step 4: limit results
-let filtered: Vec<_> = filtered.into_iter().take(10).collect(); 
+    // 🔹 Step 4: limit results
+    let filtered: Vec<_> = filtered.into_iter().take(10).collect();
 
     if filtered.is_empty() {
         println!("No apps found");

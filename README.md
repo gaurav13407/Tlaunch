@@ -1,113 +1,49 @@
 # 🚀 Tlaunch
 
-> A terminal-first Linux app launcher with alias support, fast search, and seamless shell integration.
-
----
-
-## 🧠 Overview
-
-Tlaunch is a lightweight, keyboard-driven application launcher designed for a minimal Linux workflow.
-It allows you to search, run, and manage applications directly from the terminal — eliminating the need for traditional GUI launchers.
+> A terminal-first Linux app launcher with fuzzy search, alias system, and shell integration.
 
 ---
 
 ## ✨ Features
 
-* 🔍 **App Discovery**
-
-  * Scans installed applications via `.desktop` files
-
-* ⚡ **Fast Search**
-
-  * Partial and case-insensitive matching
-
-* 🚀 **Instant Launch**
-
-  * Launch GUI apps directly from terminal
-
-* 🔗 **Alias System**
-
-  * Create custom shortcuts for apps
-
-* 🧩 **Shell Integration**
-
-  * Automatically handles unknown commands
-
-* ⚙️ **Config-Based**
-
-  * Uses TOML for clean configuration
-
----
-
-## 🖥️ Example Usage
-
-```bash
-# Run app directly
-tlaunch chrome
-
-# Use alias
-c
-
-# Add alias
-tlaunch alias add c chrome
-
-# List aliases
-tlaunch alias list
-```
+* 🔍 Fuzzy Search (smart matching like `gch` → Google Chrome)
+* ⚡ Fast App Launching
+* 🔗 Alias System (`c → chrome`)
+* 🧩 Shell Integration (run apps directly)
+* 🖥️ Interactive Picker (`tlaunch pick`)
 
 ---
 
 ## ⚙️ Installation
 
+### 🔹 Recommended (Cargo)
+
+```bash
+cargo install tlaunch
+```
+
+---
+
+### 🔹 From Source
+
 ```bash
 git clone https://github.com/your-username/tlaunch.git
 cd tlaunch
 cargo build --release
-sudo mv target/release/tlaunch /usr/local/bin/
+sudo cp target/release/tlaunch /usr/local/bin/
 ```
 
 ---
 
-## 🔧 Configuration
+## ⚠️ First Time Setup
 
-Config file:
+After installation, run:
 
 ```bash
-~/.tlaunch/config.toml
+tlaunch setup
 ```
 
-Example:
-
-```toml
-[aliases]
-c = "google-chrome-stable"
-v = "code"
-```
-
----
-
-## 🧠 How It Works
-
-1. Scans `.desktop` files to detect installed applications
-2. Matches user input against:
-
-   * aliases
-   * app names
-3. Executes the corresponding command
-
----
-
-## 🔌 Shell Integration (Zsh)
-
-Add this to your `~/.zshrc`:
-
-```bash
-command_not_found_handler() {
-    tlaunch "$1"
-}
-```
-
-Now you can directly run:
+This enables shell integration so you can directly type:
 
 ```bash
 chrome
@@ -116,12 +52,50 @@ c
 
 ---
 
-## 🎯 Project Goals
+## 🖥️ Usage
 
-* Enable a terminal-first workflow
-* Replace traditional GUI app launchers
-* Focus on speed, simplicity, and efficiency
-* Build a modular Linux environment
+### Launch apps
+
+```bash
+tlaunch chrome
+tlaunch gch
+```
+
+---
+
+### Alias system
+
+```bash
+tlaunch alias add c chrome
+tlaunch alias list
+tlaunch alias remove c
+```
+
+---
+
+### Interactive picker
+
+```bash
+tlaunch pick
+```
+
+---
+
+### List apps
+
+```bash
+tlaunch list
+tlaunch list chrome
+```
+
+---
+
+## 🧠 Example
+
+```bash
+tlaunch alias add c gch
+c
+```
 
 ---
 
@@ -129,16 +103,16 @@ c
 
 * Rust
 * TOML
-* Linux (Wayland/X11)
+* Linux (.desktop parsing)
+* fuzzy-matcher
 
 ---
 
 ## 🚀 Future Improvements
 
-* Fuzzy search
-* App usage ranking
-* Caching for faster startup
-* Wayland overlay launcher
+* App caching
+* Usage-based ranking
+* TUI interface
 
 ---
 
@@ -150,7 +124,5 @@ Gaurav Joshi
 
 ## ⭐ Motivation
 
-Tlaunch is part of a broader goal to build a minimal, terminal-driven Linux environment with full keyboard control and high efficiency.
-
----
+Built to create a fast, keyboard-driven Linux workflow without relying on traditional desktop environments.
 
