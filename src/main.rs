@@ -2,6 +2,7 @@ mod scanner;
 mod model;
 mod search;
 mod runner;
+mod config;
 
 use scanner::scan_apps;
 use search::find_app;
@@ -15,8 +16,7 @@ fn main() {
         return;
     }
 
-    let query = &args[1];
-
+    // setup paths
     let home = std::env::var("HOME").unwrap();
     let local_path = format!("{}/.local/share/applications", home);
 
@@ -25,6 +25,52 @@ fn main() {
         local_path,
     ];
 
+
+    if args.len() >= 5 && args[1] == "alias" && args[2] == "add" {
+        let alias = &args[3];
+        let target = &args[4];
+
+        let mut config = config::load_config();
+
+        if config.aliases.contains_key(alias) {
+            println!("Alias already exists");
+            return;
+        }
+
+        let apps = scan_apps(paths.clone());
+
+        if let Some(app) = find_app(&apps, target) {
+            config.aliases.insert(alias.clone(), app.exec.clone());
+            config::save_config(&config);
+            println!("Alias '{}' added for {}", alias, app.name);
+        } else {
+            println!("App not found");
+        }
+
+        return;
+    }
+
+
+    let query = &args[1];
+    let config = config::load_config();
+
+    // check alias first
+    if let Some(exec) = config.aliases.get(query) {
+        println!("Launching alias: {}", query);
+
+        let parts: Vec<&str> = exec.split_whitespace().collect();
+
+        if let Some((cmd, args)) = parts.split_first() {
+            std::process::Command::new(cmd)
+                .args(args)
+                .spawn()
+                .expect("Failed to launch");
+        }
+
+        return;
+    }
+
+    // fallback to search
     let apps = scan_apps(paths);
 
     if let Some(app) = find_app(&apps, query) {
