@@ -4,7 +4,6 @@ mod model;
 mod picker;
 mod runner;
 mod scanner;
-mod search;
 mod setup;
 
 use runner::run_app;
