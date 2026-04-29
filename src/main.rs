@@ -3,6 +3,7 @@ mod model;
 mod search;
 mod runner;
 mod config;
+mod setup;
 
 use scanner::scan_apps;
 use search::find_app;
@@ -10,7 +11,11 @@ use runner::run_app;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-
+     
+     if args.len() >= 2 && args[1] == "setup" {
+    setup::run_setup();
+    return;
+}
     if args.len() < 2 {
         println!("Usage: tlaunch <app>");
         return;
@@ -25,7 +30,25 @@ fn main() {
         local_path,
     ];
 
+if args.len() >= 2 && args[1] == "list" {
+    let apps = scan_apps(paths);
 
+    if args.len() == 3 {
+        let query = args[2].to_lowercase();
+
+        for app in apps {
+            if app.name.to_lowercase().contains(&query) {
+                println!("{} → {}", app.name, app.exec);
+            }
+        }
+    } else {
+        for app in apps {
+            println!("{} → {}", app.name, app.exec);
+        }
+    }
+
+    return;
+}
     if args.len() >= 5 && args[1] == "alias" && args[2] == "add" {
         let alias = &args[3];
         let target = &args[4];
